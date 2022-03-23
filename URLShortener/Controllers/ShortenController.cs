@@ -7,6 +7,7 @@ namespace URLShortener.Controllers;
 public class ShortenController : BaseController
 {
     private readonly ShortenerContext _context;
+    private const string _WebsiteLink = "https://localhost:7241/";
 
     public ShortenController(ShortenerContext context)
     {
@@ -14,22 +15,35 @@ public class ShortenController : BaseController
     }
 
     [HttpPost]
-    public async Task<Link> Shorten(string link)
+    public async Task<string> Shorten(string link)
     {
-        var guid =  System.Guid.NewGuid().ToString()[24..];
-        var fullURI = "https://localhost:7241/" + guid;
-
+        var fullUri = CreateShortenLink(_WebsiteLink);
+        
         var shortenedLink = new Link
         {
             Original = link,
-            Shortened = fullURI,
+            Shortened = fullUri,
             ShortenedAt = DateTime.Now
         };
         
         await _context.Links.AddAsync(shortenedLink);
         await _context.SaveChangesAsync();
 
-        return shortenedLink;
+        return shortenedLink.Shortened;
+    }
+
+    private string CreateShortenLink(string url)
+    {
+        var guid = Guid.NewGuid().ToString()[24..];
+        var fullLink = url + guid;
+
+        if (_context.Links.FirstOrDefault(x => x.Shortened == url + guid) != default)
+        {
+            CreateShortenLink(url);
+        }
+
+        return fullLink;
+
     }
     
 }
