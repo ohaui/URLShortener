@@ -13,11 +13,17 @@ public class ShortenController : BaseController
     {
         _context = context;
     }
-
-    [HttpPost]
+    
     public async Task<string> Shorten(string link)
     {
         var fullUri = CreateShortenLink(_WebsiteLink);
+
+        var isLinkContains = _context.Links.FirstOrDefault(x => x.Original == link); //need to rename 🤣
+
+        if (isLinkContains != default)
+        {
+            return isLinkContains.Shortened!;
+        }
         
         var shortenedLink = new Link
         {
