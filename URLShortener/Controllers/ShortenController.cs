@@ -7,7 +7,7 @@ namespace URLShortener.Controllers;
 public class ShortenController : BaseController
 {
     private readonly ShortenerContext _context;
-    private const string _WebsiteLink = "https://localhost:7241/";
+    private const string _WebsiteLink = "http://ohaui.tk/";
 
     public ShortenController(ShortenerContext context)
     {
